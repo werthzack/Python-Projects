@@ -19,4 +19,4 @@ for name,offer in Offers.items():
         highest_bidder = name
         highest_offer = conv_offer
 
-print(f"{highest_bidder} wins the auciton with a bid of {highest_offer}")
+print(f"{highest_bidder} wins the auciton with a bid of ${highest_offer}")
