@@ -30,3 +30,9 @@ resources = {
     "coffee": 100,
 }
 
+prices = {
+    "water": 0.01,
+    "milk": 0.02,
+    "coffee": 0.05,
+}
+

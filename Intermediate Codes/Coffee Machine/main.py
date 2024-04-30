@@ -1,5 +1,6 @@
 from database import MENU
 from database import resources
+from database import prices
 
 machine_resources = resources
 amount = 0.0
@@ -9,23 +10,36 @@ passkey = "password"
 
 
 def refill_machine():
+    global amount, entries
     measure = ""
     print("Here are the following stats for this machine:")
     for key in machine_resources:
         measure = "g" if key == "coffee" else "ml"
         print(f"{key.title()}: {machine_resources[key]}{measure}")
 
-    print(f"Cash: ${amount}")
-    target_ingredient = input("What ingredient do you want to refill? ")
+    target_ingredient = input("What ingredient do you want to refill? ").lower()
     if resources.get(target_ingredient) is None:
         print("Invalid Ingredient")
         return
+    print(f"To refill {target_ingredient}, it's ${prices[target_ingredient]} per {measure}")
+    print(f"Cash: ${amount}")
     refill_amount = input(f"what's the amount in {measure} ")
     if not refill_amount.isnumeric():
         print("Invalid refill amount")
         return
 
-    machine_resources[target_ingredient] += int(refill_amount)
+    total_amount = int(refill_amount) * prices[target_ingredient]
+    confirmation = True if input(f"Here's the total amount: ${total_amount}, confirm purchase? Y/N ").upper() == "Y"\
+        else False
+    if confirmation:
+        machine_resources[target_ingredient] += int(refill_amount)
+        amount -= total_amount
+        print(f"Ingredient '{target_ingredient.title()}' has been refilled")
+        entries.append(f"Purchased ${total_amount} worth of ingredient '{target_ingredient.title()}' "
+                       f"equivalent to {refill_amount}{measure}")
+        command = input("Do you want make another refill?(refill)")
+        if command == "refill":
+            refill_machine()
 
 
 def authenticate():
