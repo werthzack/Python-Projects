@@ -47,10 +47,5 @@ while loss == False:
         prev_choice,prev_index = new_choice,new_index
     else:
         loss = True
-
     
 print(f"Your score is {score}")
-    
-    
-
-
