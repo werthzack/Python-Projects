@@ -16,16 +16,16 @@ def refill_machine():
         print(f"{key.title()}: {machine_resources[key]}{measure}")
 
     print(f"Cash: ${amount}")
-    target_ingredient = input("What ingredient do you want to refill?")
-    if MENU.get(target_ingredient) is None:
+    target_ingredient = input("What ingredient do you want to refill? ")
+    if resources.get(target_ingredient) is None:
         print("Invalid Ingredient")
         return
-    refill_amount = input(f"what's the amount in {measure}")
+    refill_amount = input(f"what's the amount in {measure} ")
     if not refill_amount.isnumeric():
         print("Invalid refill amount")
         return
 
-    machine_resources[target_ingredient] += refill_amount
+    machine_resources[target_ingredient] += int(refill_amount)
 
 
 def authenticate():
@@ -87,7 +87,7 @@ def generate_report(data, cash, logs):
     if len(entries) < 1:
         return
 
-    show_log = True if input("Would you like to see the entry log? Y/N").upper() == "Y" else False
+    show_log = True if input("Would you like to see the entry log? Y/N ").upper() == "Y" else False
     if show_log:
         print("Here are the payments recorded in the machine...")
         for log in logs:
