@@ -13,6 +13,6 @@ class Food(Turtle):
         self.new_location()
 
     def new_location(self):
-        x_cor = random.randrange(-280, 280, 20)
-        y_cor = random.randrange(-280, 280, 20)
+        x_cor = random.randrange(-260, 260, 20)
+        y_cor = random.randrange(-260, 260, 20)
         self.goto(x_cor, y_cor)
