@@ -24,8 +24,6 @@ game_over = False
 
 while game_over is False:
     new_snake.move()
-    screen.update()
-    time.sleep(.1)
 
     if new_snake.head.distance(food) < 15:
         food.new_location()
@@ -35,14 +33,20 @@ while game_over is False:
     xcor = new_snake.head.xcor()
     ycor = new_snake.head.ycor()
 
-    if xcor >= 280 or xcor <= -280 or ycor >= 280 or ycor <= -280:
-        scoreboard.game_over()
-        game_over = True
+    if xcor > 300 or xcor < -300 or ycor > 300 or ycor < -300:
+        time.sleep(1)
+        new_snake.reset()
+        scoreboard.reset_score()
 
     snake_body = new_snake.segments[1:]
     for segment in snake_body:
         if new_snake.head.distance(segment) < 10:
-            game_over = True
-            scoreboard.game_over()
+            time.sleep(1)
+            new_snake.reset()
+            scoreboard.reset_score()
+
+    screen.update()
+    time.sleep(.09)
+
 
 screen.exitonclick()
