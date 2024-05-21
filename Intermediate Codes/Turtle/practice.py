@@ -61,9 +61,10 @@ def spiro_graph():
     angle = 0
     while angle <= 360:
         angle += 15
-        new_turtle.color((randint(0,255)),randint(0,255),randint(0,255))
+        new_turtle.color((randint(0, 255)), randint(0, 255), randint(0, 255))
         new_turtle.setheading(angle)
         new_turtle.circle(100)
+
 
 spiro_graph()
 
