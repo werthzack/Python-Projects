@@ -31,9 +31,9 @@ def reveal_all():
     for state in states:
         print(state)
         if state in states_found:
-            print("found")
             continue
         reveal_state(state)
+
 
 while correct_count < total_states:
     guess = screen.textinput(title="Name the State", prompt="Name a state in America.\nType 'Reveal' to end the"
