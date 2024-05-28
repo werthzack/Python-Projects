@@ -5,22 +5,33 @@ PINK = "#e2979c"
 RED = "#e7305b"
 GREEN = "#9bdeac"
 YELLOW = "#f7f5dd"
-FONT_NAME = "Courier"
+FONT_NAME = "Cambria"
 WORK_MIN = 25
 SHORT_BREAK_MIN = 5
 LONG_BREAK_MIN = 20
-timer: str = ""
 
+# NON-CONSTANTS
+timer: str = ""
 reps = 0
 session = 0
 on_timer = False
 
 
 # ---------------------------- TIMER RESET ------------------------------- #
+def reset_timer():
+    global reps, session, on_timer
+    if timer != "":
+        window.after_cancel(timer)
+    change_color("#ffffff")
+    title_text.config(text="Pomodoro Timer", foreground=GREEN)
+    canvas.itemconfig(timer_text, text="00:00")
+    reps = session = 0
+    on_timer = False
+
 
 # ---------------------------- TIMER MECHANISM ------------------------------- # 
 def start_timer():
-    global reps, session,on_timer
+    global reps, session, on_timer
     if on_timer:
         return
     reps += 1
@@ -55,19 +66,8 @@ def end_timer():
         start_timer()
 
 
-def reset_timer():
-    global reps, session, on_timer
-    if timer != "":
-        window.after_cancel(timer)
-    change_color("#ffffff")
-    title_text.config(text="Pomodoro Timer", foreground=GREEN)
-    canvas.itemconfig(timer_text, text="00:00")
-    reps = session = 0
-    on_timer = False
-
-
 def count_down(count):
-    global timer,on_timer
+    global timer, on_timer
     text = "{min}:{sec}".format(min=int(count / 60), sec=(count % 60) if (count % 60) >= 10 else f"0{(count % 60)}")
     canvas.itemconfig(timer_text, text=text)
     if count > 0:
