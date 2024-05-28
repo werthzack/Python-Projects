@@ -1,6 +1,8 @@
-alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
+            'v', 'w', 'x', 'y', 'z']
 
-def cipher(text:str,shift:str,direction:str):
+
+def cipher(text: str, shift: int, direction: str):
     ciphered_info = []
     for letter in text:
         if not letter.isalpha():
@@ -12,15 +14,16 @@ def cipher(text:str,shift:str,direction:str):
         ciphered_letter = ""
 
         if direction == "decode":
-            ciphered_letter = alphabet[(index + shift)% 26]
+            ciphered_letter = alphabet[(index + shift) % 26]
         else:
-            ciphered_letter = alphabet[(index - shift)% 26]
+            ciphered_letter = alphabet[(index - shift) % 26]
 
         if upper:
             ciphered_letter = ciphered_letter.upper()
 
         ciphered_info.append(ciphered_letter)
     return ''.join(ciphered_info)
+
 
 active = True
 
@@ -29,6 +32,6 @@ while active == True:
     text = input("Input Your Message: \n")
     shift = int(input("Input the shift number: "))
 
-    print(cipher(text,shift,instruction))
+    print(cipher(text, shift, instruction))
 
     active = True if input("Continue? Y/N: \n") == "Y" else False
