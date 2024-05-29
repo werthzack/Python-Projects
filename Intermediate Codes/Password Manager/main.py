@@ -3,6 +3,7 @@ from tkinter import messagebox
 from random import *
 import pyperclip
 import os
+import json
 
 letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
            'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
@@ -38,10 +39,10 @@ def home_window():
     welcome_text = Label(text="Welcome User, Please Select an option", pady=10)
     welcome_text.grid(column=1, row=1)
 
-    button1 = Button(text="Add a new Password", command=lambda: open_window(password_window, window))
+    button1 = Button(text="Open Password Manager", command=lambda: open_window(password_window, window))
     button1.grid(column=1, row=2)
 
-    button2 = Button(text="Open Password File", command=open_file)
+    button2 = Button(text="Settings", command=open_file)
     button2.grid(column=1, row=3)
 
     window.mainloop()
@@ -59,9 +60,24 @@ def password_window():
                                                                             f"{password_entry.get()}\nDo you want to "
                                                                             f"proceed?")
         if confirm:
+            new_data = {
+                website_entry.get(): {
+                    "email": email_entry.get(),
+                    "password": password_entry.get()
+                }
+            }
             messagebox.showinfo(title="Success", message="Your Details have been saved successfully")
-            with open("save_file.txt", "a") as save_file:
-                save_file.write(f"{website_entry.get()}, {email_entry.get()}, {password_entry.get()}\n")
+            try:
+                with open("save_file.json", "r") as save_file:
+                    data = json.load(save_file)
+            except FileNotFoundError:
+                with open("save_file.json", "w") as save_file:
+                    json.dump(new_data, save_file)
+            else:
+                data.update(new_data)
+                with open("save_file.json", "w") as save_file:
+                    json.dump(data, save_file, indent=4)
+            finally:
                 website_entry.delete(0, END)
                 password_entry.delete(0, END)
 
@@ -83,6 +99,21 @@ def password_window():
         password_entry.delete(0, END)
         password_entry.insert(0, password)
         pyperclip.copy(password)
+
+    def find_info():
+        try:
+            with open("save_file.json", "r") as save_file:
+                data: dict = json.load(save_file)
+                details = data.get(website_entry.get())
+        except (FileNotFoundError, KeyError):
+            messagebox.showinfo(title="Error", message="Website details does not exist")
+        else:
+            data.update(new_data)
+            with open("save_file.json", "w") as save_file:
+                json.dump(data, save_file, indent=43)
+        finally:
+            website_entry.delete(0, END)
+            password_entry.delete(0, END)
 
     # Window Configuration
     window = Tk()
@@ -112,6 +143,8 @@ def password_window():
     password_entry = Entry(width=21)
     password_entry.grid(column=1, row=3, sticky="EW")
 
+    search_button = Button(text="Search", command=find_info)
+    search_button.grid(column=2, row=1, sticky="EW")
     generate_button = Button(text="Generate Password", command=generate_password)
     generate_button.grid(column=2, row=3, sticky="EW")
     add_button = Button(text="Add", width=10, command=add_password)
