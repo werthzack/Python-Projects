@@ -2,7 +2,6 @@ from tkinter import *
 from tkinter import messagebox
 from random import *
 import pyperclip
-import os
 import json
 
 letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
@@ -19,18 +18,13 @@ def open_window(func, window=None):
 
 
 def home_window():
-    def open_file():
-        if os.path.exists("save_file.txt"):
-            os.startfile("save_file.txt")
-        else:
-            messagebox.showinfo(title="Error", message="No Save Data Detected")
     # Window Configuration
     window = Tk()
     window.title("Home Window")
     window.config(padx=50, pady=25)
 
     # Canvas Setup3
-    icon = PhotoImage(file="logo.png")
+    icon = PhotoImage(file="./logo.png")
     canvas = Canvas(master=window, width=200, height=200)
     canvas.create_image(100, 100, image=icon)
     canvas.grid(column=1, row=0)
@@ -42,13 +36,20 @@ def home_window():
     button1 = Button(text="Open Password Manager", command=lambda: open_window(password_window, window))
     button1.grid(column=1, row=2)
 
-    button2 = Button(text="Settings", command=open_file)
+    button2 = Button(text="Settings", command=lambda :open_window(settings_window, window))
     button2.grid(column=1, row=3)
 
     window.mainloop()
 
 
 def password_window():
+    with open("settings.json") as settings:
+        settings_data = json.load(settings)
+        def_mail = settings_data["email"]
+        def_num = settings_data["numbers"]
+        def_sym = settings_data["symbols"]
+        def_let = settings_data["letters"]
+
     # Functions
     def add_password():
         if email_entry.get() == "" or password_entry.get() == "" or website_entry.get() == "":
@@ -82,9 +83,9 @@ def password_window():
                 password_entry.delete(0, END)
 
     def generate_password():
-        nr_letters = randint(8, 10)
-        nr_symbols = randint(2, 4)
-        nr_numbers = randint(2, 4)
+        nr_letters = int(def_let)
+        nr_symbols = int(def_sym)
+        nr_numbers = int(def_num)
 
         char_list = [choice(letters) for _ in range(nr_letters)]
         symbol_list = [choice(symbols) for _ in range(nr_symbols)]
@@ -105,15 +106,18 @@ def password_window():
             with open("save_file.json", "r") as save_file:
                 data: dict = json.load(save_file)
                 details = data.get(website_entry.get())
+                if details is None:
+                    raise KeyError
+                messagebox.showinfo(title=website_entry.get(), message=f"Email: {details["email"]} "
+                                                                       f"\nPassword: {details["password"]}"
+                                                                       f"\nPassword has been copied to clipboard")
+                pyperclip.copy(details["password"])
+                email_entry.delete(0, END)
+                email_entry.insert(0, details["email"])
+                password_entry.delete(0, END)
+                password_entry.insert(0, details["password"])
         except (FileNotFoundError, KeyError):
-            messagebox.showinfo(title="Error", message="Website details does not exist")
-        else:
-            data.update(new_data)
-            with open("save_file.json", "w") as save_file:
-                json.dump(data, save_file, indent=43)
-        finally:
-            website_entry.delete(0, END)
-            password_entry.delete(0, END)
+            messagebox.showinfo(title="Error", message=f"No Details for {website_entry.get()}")
 
     # Window Configuration
     window = Tk()
@@ -139,7 +143,7 @@ def password_window():
     website_entry.focus()
     email_entry = Entry(width=35)
     email_entry.grid(column=1, row=2, columnspan=2, sticky="EW")
-    email_entry.insert(END, "@gmail.com")
+    email_entry.insert(END, def_mail)
     password_entry = Entry(width=21)
     password_entry.grid(column=1, row=3, sticky="EW")
 
@@ -149,6 +153,71 @@ def password_window():
     generate_button.grid(column=2, row=3, sticky="EW")
     add_button = Button(text="Add", width=10, command=add_password)
     add_button.grid(column=1, row=4, columnspan=2, sticky="EW")
+
+    window.protocol("WM_DELETE_WINDOW", lambda: open_window(home_window, window))
+    window.mainloop()
+
+
+def settings_window():
+    def save_settings():
+        new_settings = {
+            "email": email_entry.get(),
+            "letters": letter_entry.get(),
+            "symbols": symbol_entry.get(),
+            "numbers": number_entry.get(),
+            "file": "save_file.json"
+        }
+
+        with open("settings.json", "r") as settings_file:
+            save_data: dict = json.load(settings_file)
+            save_data.update(new_settings)
+
+        with open("settings.json", "w") as settings_file:
+            json.dump(save_data, settings_file, indent=4)
+
+        messagebox.showinfo(title="Saved", message="Settings have been saved")
+        window.destroy()
+        open_window(home_window)
+
+    # Window Configuration
+    window = Tk()
+    window.title("Settings")
+    window.config(padx=50, pady=20)
+
+    # Title Setup
+    email_label = Label(text="Settings", font=("Cambria", 20, "bold"))
+    email_label.grid(column=1, row=0)
+
+    # Labels
+    email_label = Label(text="Default Mail:")
+    email_label.grid(column=0, row=1)
+    number_label = Label(text="Number Count:")
+    number_label.grid(column=0, row=2)
+    symbol_label = Label(text="Symbol Count:")
+    symbol_label.grid(column=0, row=4)
+    letter_label = Label(text="Letter Count:")
+    letter_label.grid(column=0, row=3)
+
+    with open("settings.json") as file:
+        data = json.load(file)
+
+    # Entries
+    email_entry = Entry(width=35)
+    email_entry.grid(column=1, row=1, columnspan=2, sticky="EW")
+    email_entry.insert(0, data["email"])
+    number_entry = Entry(width=35)
+    number_entry.grid(column=1, row=2, columnspan=2, sticky="EW")
+    number_entry.insert(0, data["numbers"])
+    letter_entry = Entry(width=35)
+    letter_entry.grid(column=1, row=3, columnspan=2, sticky="EW")
+    letter_entry.insert(0, data["letters"])
+    symbol_entry = Entry(width=35)
+    symbol_entry.grid(column=1, row=4, columnspan=2, sticky="EW")
+    symbol_entry.insert(0, data["symbols"])
+
+    # Button
+    save_button = Button(text="Save", command=save_settings)
+    save_button.grid(column=1, row=5, sticky="EW")
 
     window.protocol("WM_DELETE_WINDOW", lambda: open_window(home_window, window))
     window.mainloop()
