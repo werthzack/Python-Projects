@@ -4,10 +4,10 @@ import requests
 
 def get_quote():
     response = requests.get("https://api.kanye.rest")
-    if response.status_code == requests.codes.ok:
-        data = response.json()
-        quote = data["quote"]
-        canvas.itemconfig(quote_text, text=quote)
+    response.raise_for_status()
+    data = response.json()
+    quote = data["quote"]
+    canvas.itemconfig(quote_text, text=quote)
 
 
 window = Tk()
