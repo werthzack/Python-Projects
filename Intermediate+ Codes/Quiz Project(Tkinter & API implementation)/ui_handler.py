@@ -21,11 +21,12 @@ class Window:
         data.load_data(self.quiz_parameters["amount"], self.quiz_parameters["difficulty"],
                        self.quiz_parameters["type"], self.quiz_parameters["id"])
         amount = self.quiz_parameters["amount"]
+        print(len(data.question_data), amount)
         if len(data.question_data) < amount:
-            messagebox.showinfo(title="Notification", message="The are no questions under the "
-                                                              "selected parameters at the moment😢")
+            messagebox.showinfo(title="Notification", message="Could not find any questions under the "
+                                                              "selected parameters in the API at the moment😢")
+            self.home()
             return
-
         self.active = True
         for info in data.question_data:
             new_question = Question(info["question"], info["correct_answer"], info["category"],
@@ -38,7 +39,7 @@ class Window:
     def home(self):
         def check_details():
             try:
-                if not 3 < question_amount.get() < 50:
+                if not 3 <= question_amount.get() <= 50:
                     if question_amount.get() > 50:
                         messagebox.showinfo(title="Out of Range", message="Question amount has exceeded maximum range, "
                                                                           "setting it to 50")
@@ -104,12 +105,12 @@ class Window:
         category_entry = ttk.OptionMenu(window, selected_category, category_options[0],
                                         *category_options)
         category_entry.grid(row=3, column=1, sticky="EW")
-        tfoption = ttk.Radiobutton(window, text="True/False", value="boolean",
-                                   variable=selected_type)
-        tfoption.grid(row=4, column=1, pady=5, sticky="EW")
-        mcoption = ttk.Radiobutton(window, text="Multiple Choice", value="multiple",
-                                   variable=selected_type)
-        mcoption.grid(row=5, column=1, pady=5, sticky="EW")
+        tf_option = ttk.Radiobutton(window, text="True/False", value="boolean",
+                                    variable=selected_type)
+        tf_option.grid(row=4, column=1, pady=5, sticky="EW")
+        mc_option = ttk.Radiobutton(window, text="Multiple Choice", value="multiple",
+                                    variable=selected_type)
+        mc_option.grid(row=5, column=1, pady=5, sticky="EW")
 
         start_button = Button(text="Take Quiz", font=("Cambria", 12, "normal"), command=check_details)
         start_button.grid(row=6, column=0, columnspan=2, pady=10)
@@ -180,7 +181,7 @@ class Window:
                 else:
                     [option.grid_forget() for option in options]
 
-                menu_button.grid(row=2, column=1)
+                menu_button.grid(row=2, column=1, sticky="")
                 retry_button.grid(row=2, column=0)
 
         window = Tk()
@@ -202,6 +203,7 @@ class Window:
         canvas.grid(row=1, column=0, columnspan=2, pady=30)
 
         menu_button = Button(text="Menu", font=("Cambria", 18, "normal"), command=menu)
+        menu_button.grid(row=0, column=0, sticky="W")
         retry_button = Button(text="Retry", font=("Cambria", 18, "normal"), command=retry)
 
         if quiz.quiz_type == "boolean":
