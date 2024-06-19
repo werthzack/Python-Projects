@@ -4,6 +4,8 @@ from random import *
 import pyperclip
 import json
 
+file = "C:/Users/USER/3D Objects/Passwords/save_file.json"
+
 letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
            'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
            'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -69,14 +71,14 @@ def password_window():
             }
             messagebox.showinfo(title="Success", message="Your Details have been saved successfully")
             try:
-                with open("save_file.json", "r") as save_file:
+                with open(file, "r") as save_file:
                     data = json.load(save_file)
             except FileNotFoundError:
-                with open("save_file.json", "w") as save_file:
+                with open(file, "w") as save_file:
                     json.dump(new_data, save_file)
             else:
                 data.update(new_data)
-                with open("save_file.json", "w") as save_file:
+                with open(file, "w") as save_file:
                     json.dump(data, save_file, indent=4)
             finally:
                 website_entry.delete(0, END)
@@ -103,7 +105,7 @@ def password_window():
 
     def find_info():
         try:
-            with open("save_file.json", "r") as save_file:
+            with open(file, "r") as save_file:
                 data: dict = json.load(save_file)
                 details = data.get(website_entry.get())
                 if details is None:
