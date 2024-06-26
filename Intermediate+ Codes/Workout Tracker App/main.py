@@ -18,7 +18,7 @@ body = {
 response = requests.post(url=url, headers=headers, json=body)
 data = response.json()['exercises']
 
-sheet_url = "https://api.sheety.co/17b65e5e319b30b16c69c644b430f987/myWorkouts/workouts"
+sheet_url = f"https://api.sheety.co/{os.getenv('SHEETY_API')}/myWorkouts/workouts"
 sheet_header = {
     "Authorization": f"Bearer {os.getenv('WORKOUT(SHEETY)_API')}"
 }
