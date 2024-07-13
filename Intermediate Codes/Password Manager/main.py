@@ -225,4 +225,5 @@ def settings_window():
     window.mainloop()
 
 
-home_window()
+if __name__ == '__main__':
+    home_window()
