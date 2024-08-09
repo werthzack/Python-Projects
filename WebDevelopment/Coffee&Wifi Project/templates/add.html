@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+<!--Don't forget your import here-->
+{% block title %}Add A New Cafe{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+
+      <h1>Add a new cafe into the database</h1>
+
+      <form method="POST" action="{{ url_for('home') }}">
+        {{ import wtf
+        {{ form.csrf_token }}
+        {{ wtf.quick_form(from, novalidate=True) }}
+        <input type="submit" value="Add Cafe">
+      </form>
+
+	  <p class="space-above"><a href="#">See all cafes</a></p>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
