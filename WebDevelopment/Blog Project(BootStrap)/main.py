@@ -17,6 +17,8 @@ def send_mail(name, email, number, message):
                 f"Number: {number}"
                 f"Body: {message}"
         )
+
+
 @app.route("/")
 def home():
     blog_data = requests.get(url="https://api.npoint.io/c790b4d5cab58020d391")
