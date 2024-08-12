@@ -6,9 +6,7 @@
 <div class="container">
   <div class="row">
     <div class="col-sm-12">
-
-      <h1>All Cafes</h1>
-
+      <h1>All Cafes</h1><br>
 	  <table class="table table-dark table-striped table-hover">
         <thead>
           <tr>
@@ -21,7 +19,12 @@
             {% for cafe in cafes[1:] %}
                 <tr>
                     {% for element in cafe %}
-                        <td>{{element}}</td>
+                        <td>
+                        {% if element[0:4] == "http" %}
+                            <a href={{element}}>Maps Link</a>
+                        {% else %}
+                            {{element}}
+                        {% endif %}
                     {% endfor %}
                 </tr>
             {% endfor %}

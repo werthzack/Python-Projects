@@ -1,8 +1,8 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
 from flask_bootstrap import Bootstrap5
 from flask_wtf import FlaskForm
 from wtforms import *
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, URL
 import csv
 
 app = Flask(__name__)
@@ -28,13 +28,10 @@ class CafeForm(FlaskForm):
         "power": []
     }
     for i in range(6):
-        print(i)
         for a, key in enumerate(choices):
-            emoji = emojis[key] if i > 0 else "✘"
-            print(emoji)
-            choices[key].append((i, "✘" if i < 1 else emojis[key] * i))
-
-    print(choices["coffee"])
+            if i == 0 and key == "coffee":
+                continue
+            choices[key].append(("✘" if i < 1 else emojis[key] * i))
     coffee_rating = SelectField('Coffee Rating', choices=choices["coffee"], validators=[DataRequired()])
     wifi_rating = SelectField('Wifi Rating', choices=choices["wifi"], validators=[DataRequired()])
     power_rating = SelectField('Power Outlet Rating', choices=choices["power"], validators=[DataRequired()])
@@ -57,14 +54,19 @@ def home():
 
 @app.route('/add', methods=["GET", "POST"])
 def add_cafe():
-    new_form = CafeForm()
-    if new_form.validate_on_submit():
-        print("True")
-    # Exercise:
-    # Make the form write a new row into cafe-data.csv
-    # with   if form.validate_on_submit()home
+    form = CafeForm()
+    if form.validate_on_submit():
+        with open("cafe-data.csv", mode="a", encoding='utf-8') as csv_file:
+            csv_file.write(f"\n{form.cafe.data},"
+                           f"{form.url.data},"
+                           f"{form.open_time.data},"
+                           f"{form.closing_time.data},"
+                           f"{form.coffee_rating.data},"
+                           f"{form.wifi_rating.data},"
+                           f"{form.power_rating.data}")
+        return redirect(url_for('cafes'))
 
-    return render_template('add.html', form=new_form)
+    return render_template('add.html', form=form)
 
 
 @app.route('/cafes')
